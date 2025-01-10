@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anton Priadka | Junior Python Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .parallax {
+            transition: transform 0.3s ease-out;
+        }
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #4F46E5, #9333EA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .language-switch {
+            position: fixed;
+            right: 2rem;
+            top: 2rem;
+            z-index: 100;
+            perspective: 1000px;
+        }
+        .language-switch-inner {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            width: 60px;
+            height: 60px;
+        }
+        .language-switch-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .language-switch-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-radius: 50%;
+            cursor: pointer;
+            background: linear-gradient(135deg, #4F46E5, #9333EA);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .language-switch-back {
+            transform: rotateY(180deg);
+        }
+        [data-lang="en"] {
+            display: none;
+        }
+        .lang-en [data-lang="en"] {
+            display: block;
+        }
+        .lang-en [data-lang="uk"] {
+            display: none;
+        }
+        .project-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .alert-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1100;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+
+        .alert-modal.show {
+            display: block;
+        }
+
+        .alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1050;
+        }
+
+        .alert-overlay.show {
+            display: block;
+        }
+
+        .image-viewer-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            cursor: pointer;
+        }
+
+        .image-viewer-overlay.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-viewer-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .image-viewer-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .project-image {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .project-image:hover {
+            transform: scale(1.02);
+        }
+
+        .image-viewer-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body class="bg-white font-['Inter'] lang-en">
+    <!-- Перемикач мови -->
+    <div class="language-switch">
+        <div class="language-switch-inner flipped">
+            <div class="language-switch-face language-switch-front">UA</div>
+            <div class="language-switch-face language-switch-back">EN</div>
+        </div>
+    </div>
+
+    <!-- Навігація -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-lg z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center h-20">
+                <div class="text-3xl font-bold gradient-text">АП</div>
+                <ul class="hidden md:flex space-x-8">
+                    <li>
+                        <a href="#home" class="text-gray-800 hover:text-indigo-600 transition-colors">
+                            <span data-lang="uk">Головна</span>
+                            <span data-lang="en">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#about" class="text-gray-800 hover:text-indigo-600 transition-colors">
+                            <span data-lang="uk">Про мене</span>
+                            <span data-lang="en">About</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#skills" class="text-gray-800 hover:text-indigo-600 transition-colors">
+                            <span data-lang="uk">Навички</span>
+                            <span data-lang="en">Skills</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#projects" class="text-gray-800 hover:text-indigo-600 transition-colors">
+                            <span data-lang="uk">Проекти</span>
+                            <span data-lang="en">Projects</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#education" class="text-gray-800 hover:text-indigo-600 transition-colors">
+                            <span data-lang="uk">Освіта</span>
+                            <span data-lang="en">Education</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#contact" class="text-gray-800 hover:text-indigo-600 transition-colors">
+                            <span data-lang="uk">Контакти</span>
+                            <span data-lang="en">Contact</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Головна секція -->
+    <section id="home" class="min-h-screen flex items-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-purple-700/90 -z-10"></div>
+        <div class="absolute inset-0 opacity-10 bg-[url('pattern.svg')] -z-10"></div>
+        <div class="max-w-7xl mx-auto px-6 py-32 text-center">
+            <h1 class="text-6xl md:text-7xl font-bold text-white mb-8 parallax">
+                <span data-lang="uk">Привіт, я Антон<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300">Junior Python Розробник</span></span>
+                <span data-lang="en">Hi, I'm Anton<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300">Junior Python Developer</span></span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed">
+                <span data-lang="uk">Створюю веб-додатки, розробляю ботів та працюю з блокчейн технологіями</span>
+                <span data-lang="en">Creating web applications, developing bots and working with blockchain technologies</span>
+            </p>
+            <div class="flex justify-center gap-6">
+                <a href="#contact" class="inline-block bg-white text-indigo-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-indigo-50 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl">
+                    <span data-lang="uk">Зв'язатися зі мною</span>
+                    <span data-lang="en">Contact Me</span>
+                </a>
+                <a href="resume.pdf" class="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/10 transform hover:scale-105 transition-all" download>
+                    <span data-lang="uk">Завантажити резюме</span>
+                    <span data-lang="en">Download CV</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Про мене -->
+    <section id="about" class="py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-20 gradient-text">
+                <span data-lang="uk">Про мене</span>
+                <span data-lang="en">About Me</span>
+            </h2>
+            <div class="max-w-3xl mx-auto text-lg text-gray-600 space-y-6">
+                <p data-lang="uk">
+                    Я молодий Python розробник, який захоплюється створенням сучасних технологічних рішень. Маю практичний досвід у розробці веб-застосунків, створенні Telegram-ботів та роботі з технологіями блокчейн.
+                </p>
+                <p data-lang="en">
+                    I am a young Python developer who is passionate about creating modern technological solutions. I have practical experience in web application development, Telegram bot creation, and working with blockchain technologies.
+                </p>
+                <p data-lang="uk">
+                    Я активно розвиваюсь у сфері програмування та постійно шукаю нові можливості для навчання. Маю досвід роботи з різними технологіями та інструментами, що дозволяє мені створювати ефективні рішення. Особливо цікавлюсь розробкою веб-застосунків та блокчейн технологіями.
+                </p>
+                <p data-lang="en">
+                    I am actively developing in the programming field and constantly looking for new learning opportunities. I have experience with various technologies and tools that allow me to create effective solutions. I am particularly interested in web application development and blockchain technologies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Навички -->
+    <section id="skills" class="py-32 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-20 gradient-text">
+                <span data-lang="uk">Технічні навички</span>
+                <span data-lang="en">Technical Skills</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Python & Frameworks -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fab fa-python text-3xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Python Екосистема</span>
+                        <span data-lang="en">Python Ecosystem</span>
+                    </h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Python</li>
+                        <li>• Django</li>
+                        <li>• Flask</li>
+                        <li>• aiogram/telebot</li>
+                    </ul>
+                </div>
+
+                <!-- Web Development -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-code text-3xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Веб-розробка</span>
+                        <span data-lang="en">Web Development</span>
+                    </h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• HTML/CSS</li>
+                        <li>• Tailwind CSS</li>
+                        <li>• JavaScript</li>
+                        <li>• REST API</li>
+                    </ul>
+                </div>
+
+                <!-- Database & Cloud -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-database text-3xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Бази даних та Хмари</span>
+                        <span data-lang="en">Database & Cloud</span>
+                    </h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• PostgreSQL</li>
+                        <li>• AWS S3</li>
+                        <li>• SQLite</li>
+                        <li>• MySQL</li>
+                    </ul>
+                </div>
+
+                <!-- Tools & Version Control -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-tools text-3xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Інструменти розробки</span>
+                        <span data-lang="en">Development Tools</span>
+                    </h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Git/GitHub</li>
+                        <li>• Linux</li>
+                        <li>• OpenAI</li>
+                    </ul>
+                </div>
+
+                <!-- Blockchain -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-link text-3xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Блокчейн</span>
+                        <span data-lang="en">Blockchain</span>
+                    </h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Web3.py</li>
+                        <li>• Ethereum Library</li>
+                    </ul>
+                </div>
+
+                <!-- Testing & Automation -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <div class="w-16 h-16 bg-red-100 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fas fa-robot text-3xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Автоматизація</span>
+                        <span data-lang="en">Automation</span>
+                    </h3>
+                    <ul class="text-gray-600 space-y-2">
+                        <li>• Selenium</li>
+                        <li>• Beautiful Soup</li>
+                        <li>• Requests</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Проекти -->
+    <section id="projects" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-20 gradient-text">
+                <span data-lang="uk">Мої пет-проекти</span>
+                <span data-lang="en">My pet-projects</span>
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Проект 1 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-scale">
+                    <img src="django-project.png" alt="Django Project" class="project-image" onclick="openImageViewer(this.src)">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold mb-3">
+                            <span data-lang="uk">Оптовий інтернет-магазин</span>
+                            <span data-lang="en">Wholesale E-commerce</span>
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            <span data-lang="uk">Повнофункціональний магазин з адмін-панеллю та AWS інтеграцією</span>
+                            <span data-lang="en">Full-featured store with admin panel and AWS integration</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">Django</span>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">AWS</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">E-commerce</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="https://django-wholesale-shop.onrender.com" onclick="event.preventDefault(); showLoadingAlert('https://django-wholesale-shop.onrender.com');" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-external-link-alt mr-2"></i>
+                                <span data-lang="uk">Демо</span>
+                                <span data-lang="en">Demo</span>
+                            </a>
+                            <button onclick="showProjectDetails('project1')" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-diagram-project mr-2"></i>
+                                <span data-lang="uk">Деталі проекту</span>
+                                <span data-lang="en">Project Details</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Проект 2 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-scale">
+                    <img src="todo-app.png" alt="Todo App" class="project-image" onclick="openImageViewer(this.src)">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold mb-3">
+                            <span data-lang="uk">Список справ (Todo)</span>
+                            <span data-lang="en">Todo List</span>
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            <span data-lang="uk">Сучасний додаток для управління завданнями з використанням Django та Django REST Framework.</span>
+                            <span data-lang="en">A modern task management application built with Django and Django REST Framework.</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">Django</span>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Django REST Framework</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">Bootstrap</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/STAYc0d3/smart-todo-list" target="_blank" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fab fa-github mr-2"></i>
+                                <span data-lang="uk">Код</span>
+                                <span data-lang="en">Code</span>
+                            </a>
+                            <button onclick="showProjectDetails('project2')" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-diagram-project mr-2"></i>
+                                <span data-lang="uk">Деталі проекту</span>
+                                <span data-lang="en">Project Details</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Проект 3 -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover-scale">
+                    <img src="market-sniper.png" alt="Market Sniper Bot" class="project-image" onclick="openImageViewer(this.src)">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-semibold mb-3">
+                            <span data-lang="uk">Криптовалютний арбітраж бот</span>
+                            <span data-lang="en">Crypto Arbitrage Bot</span>
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            <span data-lang="uk">Асинхронний Telegram бот для моніторингу та аналізу арбітражних можливостей на криптовалютних біржах</span>
+                            <span data-lang="en">Asynchronous Telegram bot for monitoring and analyzing arbitrage opportunities on cryptocurrency exchanges</span>
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm">aiogram 3.x</span>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">Python 3.10+</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm">CCXT</span>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-sm">Crypto APIs</span>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button onclick="showProjectDetails('project3')" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-diagram-project mr-2"></i>
+                                <span data-lang="uk">Деталі проекту</span>
+                                <span data-lang="en">Project Details</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Освіта -->
+    <section id="education" class="py-32 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-20 gradient-text">
+                <span data-lang="uk">Освіта та сертифікати</span>
+                <span data-lang="en">Education and Certificates</span>
+            </h2>
+            <div class="max-w-3xl mx-auto space-y-8">
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Технічна освіта</span>
+                        <span data-lang="en">Technical Education</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        <span data-lang="uk">Київський авіаційний інститут (КАІ)</span>
+                        <span data-lang="en">Kyiv Aviation Institute (KAI)</span>
+                    </p>
+                    <p class="text-gray-500">2023 - present</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-lg hover-scale">
+                    <h3 class="text-2xl font-semibold mb-4">
+                        <span data-lang="uk">Самоосвіта</span>
+                        <span data-lang="en">Self-education</span>
+                    </h3>
+                    <ul class="space-y-4">
+                        <li>
+                            <p class="font-semibold">
+                                <span data-lang="uk">Основи програмування на Python</span>
+                                <span data-lang="en">Python Programming Basics</span>
+                            </p>
+                            <p class="text-gray-600">2021</p>
+                        </li>
+                        <li>
+                            <p class="font-semibold">
+                                <span data-lang="uk">Веб-розробка (HTML, CSS, JavaScript)</span>
+                                <span data-lang="en">Web Development (HTML, CSS, JavaScript)</span>
+                            </p>
+                            <p class="text-gray-600">2022</p>
+                        </li>
+                        <li>
+                            <p class="font-semibold">
+                                <span data-lang="uk">Фреймворки Django</span>
+                                <span data-lang="en">Django Frameworks</span>
+                            </p>
+                            <p class="text-gray-600">2023</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакти -->
+    <section id="contact" class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-8 gradient-text">
+                <span data-lang="uk">Зв'яжіться зі мною</span>
+                <span data-lang="en">Contact Me</span>
+            </h2>
+            <p class="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
+                <span data-lang="uk">Відкритий до пропозицій роботи та співпраці над цікавими проектами</span>
+                <span data-lang="en">Open to job offers and collaboration on interesting projects</span>
+            </p>
+            <form action="https://formspree.io/f/xbllqygl" method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span data-lang="uk">Ваше ім'я</span>
+                        <span data-lang="en">Your Name</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span data-lang="uk">Ваш email</span>
+                        <span data-lang="en">Your Email</span>
+                    </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
+                    >
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        <span data-lang="uk">Повідомлення</span>
+                        <span data-lang="en">Message</span>
+                    </label>
+                    <textarea 
+                        name="message" 
+                        required
+                        rows="4"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent resize-none"
+                    ></textarea>
+                </div>
+
+                <!-- Приховане поле для мови -->
+                <input type="hidden" name="language" id="contactFormLang" value="en">
+                
+                <button 
+                    type="submit" 
+                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300"
+                >
+                    <span data-lang="uk">Надіслати повідомлення</span>
+                    <span data-lang="en">Send Message</span>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="bg-gray-900 text-white py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-center space-x-8 mb-8">
+                <a href="https://github.com/STAYc0d3" target="_blank" class="hover:text-indigo-400 transform hover:scale-110 transition-all">
+                    <i class="fab fa-github text-3xl"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/антон-прядка-484b41294/" target="_blank" class="hover:text-indigo-400 transform hover:scale-110 transition-all">
+                    <i class="fab fa-linkedin text-3xl"></i>
+                </a>
+                <a href="https://t.me/Antonpriadka" target="_blank" class="hover:text-indigo-400 transform hover:scale-110 transition-all">
+                    <i class="fab fa-telegram text-3xl"></i>
+                </a>
+            </div>
+            <p class="text-center text-gray-400">
+                <span data-lang="uk">&copy; 2024 Антон Прядка. Створено з ❤️ в Україні</span>
+                <span data-lang="en">&copy; 2024 Anton Priadka. Created with ❤️ in Ukraine</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Додайте модальне вікно в кінець body -->
+    <div id="project1Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('project1Modal')">&times;</span>
+            <h2 class="text-3xl font-bold mb-6 gradient-text">
+                <span data-lang="uk">E-commerce платформа для оптової торгівлі</span>
+                <span data-lang="en">Wholesale E-commerce Platform</span>
+            </h2>
+            
+            <div class="space-y-8">
+                <!-- Огляд проекту -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-lightbulb text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Огляд проекту</span>
+                        <span data-lang="en">Project Overview</span>
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        <span data-lang="uk">
+                            Сучасна e-commerce платформа, розроблена для оптової торгівлі з використанням передових технологій та архітектурних рішень. Проект поєднує потужний функціонал Django з елегантним користувацьким інтерфейсом на Tailwind CSS.
+                        </span>
+                        <span data-lang="en">
+                            A modern e-commerce platform designed for wholesale trade using cutting-edge technologies and architectural solutions. The project combines powerful Django functionality with an elegant Tailwind CSS user interface.
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Технічний стек -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-layer-group text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Технічний стек</span>
+                        <span data-lang="en">Tech Stack</span>
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Backend</span>
+                            <p class="text-sm text-gray-600">Django 5.0+</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Frontend</span>
+                            <p class="text-sm text-gray-600">Tailwind CSS, JavaScript</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Database</span>
+                            <p class="text-sm text-gray-600">PostgreSQL</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Cloud</span>
+                            <p class="text-sm text-gray-600">AWS S3</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ключові особливості -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-star text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Ключові особливості</span>
+                        <span data-lang="en">Key Features</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Розширена система варіантів товарів</span>
+                                <span data-lang="en">Advanced product variant system</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Гнучка система знижок для оптових замовлень</span>
+                                <span data-lang="en">Flexible bulk order discount system</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Інтелектуальна фільтрація товарів</span>
+                                <span data-lang="en">Smart product filtering</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Потужна адмін-панель управління</span>
+                                <span data-lang="en">Powerful admin management panel</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Інтеграція з хмарним сховищем</span>
+                                <span data-lang="en">Cloud storage integration</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Автоматизована система сповіщень</span>
+                                <span data-lang="en">Automated notification system</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Технічні деталі -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-code text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Технічні деталі</span>
+                        <span data-lang="en">Technical Details</span>
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Архітектура на основі Django MVT з використанням Service Layer</span>
+                            <span data-lang="en">• Django MVT architecture with Service Layer implementation</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Оптимізовані SQL-запити та кешування</span>
+                            <span data-lang="en">• Optimized SQL queries and caching</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Безпечне зберігання медіафайлів в AWS S3</span>
+                            <span data-lang="en">• Secure media file storage in AWS S3</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="project2Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('project2Modal')">&times;</span>
+            <h2 class="text-3xl font-bold mb-6 gradient-text">
+                <span data-lang="uk">Список справ (Todo)</span>
+                <span data-lang="en">Todo List</span>
+            </h2>
+            
+            <div class="space-y-8">
+                <!-- Огляд проекту -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-lightbulb text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Огляд проекту</span>
+                        <span data-lang="en">Project Overview</span>
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        <span data-lang="uk">
+                            Сучасний додаток для управління завданнями, розроблений з використанням Django та Django REST Framework. Додаток дозволяє користувачам створювати, редагувати та видаляти завдання, а також відстежувати їх пріоритети та дедлайни.
+                        </span>
+                        <span data-lang="en">
+                            A modern task management application built with Django and Django REST Framework. The app allows users to create, edit, and delete tasks, as well as track their priorities and deadlines.
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Технічний стек -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-layer-group text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Технічний стек</span>
+                        <span data-lang="en">Tech Stack</span>
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Backend</span>
+                            <p class="text-sm text-gray-600">Django 5.0</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">API</span>
+                            <p class="text-sm text-gray-600">Django REST Framework</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Frontend</span>
+                            <p class="text-sm text-gray-600">Bootstrap 5, Axios</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Database</span>
+                            <p class="text-sm text-gray-600">SQLite</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ключові особливості -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-star text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Ключові особливості</span>
+                        <span data-lang="en">Key Features</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Створення, редагування та видалення завдань</span>
+                                <span data-lang="en">Create, edit, and delete tasks</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Встановлення пріоритетів та категорій</span>
+                                <span data-lang="en">Set priorities and categories</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Відстеження дедлайнів та часу виконання</span>
+                                <span data-lang="en">Track deadlines and estimated time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Технічні деталі -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-code text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Технічні деталі</span>
+                        <span data-lang="en">Technical Details</span>
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Використання MVC архітектури для організації коду</span>
+                            <span data-lang="en">• MVC architecture used for code organization</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Стандартні механізми безпеки Django</span>
+                            <span data-lang="en">• Standard Django security mechanisms</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Оптимізація запитів до бази даних</span>
+                            <span data-lang="en">• Database query optimization</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="project3Modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('project3Modal')">&times;</span>
+            <h2 class="text-3xl font-bold mb-6 gradient-text">
+                <span data-lang="uk">Криптовалютний арбітраж бот</span>
+                <span data-lang="en">Crypto Arbitrage Bot</span>
+            </h2>
+            
+            <div class="space-y-8">
+                <!-- Огляд проекту -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-lightbulb text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Огляд проекту</span>
+                        <span data-lang="en">Project Overview</span>
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        <span data-lang="uk">
+                            Потужний Telegram бот для моніторингу криптовалютних бірж та пошуку арбітражних можливостей. Бот підтримує 8+ популярних бірж, має гнучку систему налаштувань та адмін-панель для керування.
+                        </span>
+                        <span data-lang="en">
+                            A powerful Telegram bot for monitoring cryptocurrency exchanges and finding arbitrage opportunities. The bot supports 8+ popular exchanges, has a flexible settings system and an admin panel for management.
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Технічний стек -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-layer-group text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Технічний стек</span>
+                        <span data-lang="en">Tech Stack</span>
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Core</span>
+                            <p class="text-sm text-gray-600">Python 3.10+, aiogram 3.x</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">Database</span>
+                            <p class="text-sm text-gray-600">SQLite3</p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <span class="font-medium">APIs</span>
+                            <p class="text-sm text-gray-600">CCXT, Multiple Exchange APIs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ключові особливості -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-star text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Ключові особливості</span>
+                        <span data-lang="en">Key Features</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Асинхронний парсинг 8+ бірж</span>
+                                <span data-lang="en">Asynchronous parsing of 8+ exchanges</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Три режими роботи з різними параметрами</span>
+                                <span data-lang="en">Three operation modes with different parameters</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Система фільтрації за market cap</span>
+                                <span data-lang="en">Market cap filtering system</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span data-lang="uk">Адмін-панель з розширеними можливостями</span>
+                                <span data-lang="en">Admin panel with advanced features</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Технічні деталі -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-3 flex items-center">
+                        <i class="fas fa-code text-indigo-600 mr-3"></i>
+                        <span data-lang="uk">Технічні деталі</span>
+                        <span data-lang="en">Technical Details</span>
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg space-y-2">
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Використання патернів Observer, Factory та Singleton</span>
+                            <span data-lang="en">• Implementation of Observer, Factory and Singleton patterns</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Оптимізація паралельних запитів через семафори</span>
+                            <span data-lang="en">• Optimization of parallel requests using semaphores</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Модульна архітектура з розділенням бізнес-логіки</span>
+                            <span data-lang="en">• Modular architecture with business logic separation</span>
+                        </p>
+                        <p class="text-sm text-gray-600">
+                            <span data-lang="uk">• Оновлення даних кожні 5 хвилин</span>
+                            <span data-lang="en">• Data updates every 5 minutes</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingAlert" class="alert-modal">
+        <i class="fas fa-clock text-3xl text-indigo-600 mb-4"></i>
+        <h3 class="text-xl font-semibold mb-2">
+            <span data-lang="uk">Зачекайте, будь ласка</span>
+            <span data-lang="en">Please Wait</span>
+        </h3>
+        <p class="text-gray-600 mb-4">
+            <span data-lang="uk">
+                Сайт розміщений на безкоштовному хостингу, тому перше завантаження може зайняти до 30 секунд. Дякуємо за терпіння!
+            </span>
+            <span data-lang="en">
+                The site is hosted on a free hosting service, so the initial load may take up to 30 seconds. Thank you for your patience!
+            </span>
+        </p>
+        <div class="flex justify-center gap-4">
+            <button onclick="proceedToDemo()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                <span data-lang="uk">Продовжити</span>
+                <span data-lang="en">Continue</span>
+            </button>
+            <button onclick="closeAlert()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                <span data-lang="uk">Скасувати</span>
+                <span data-lang="en">Cancel</span>
+            </button>
+        </div>
+    </div>
+    <div id="alertOverlay" class="alert-overlay"></div>
+
+    <div id="imageViewer" class="image-viewer-overlay" onclick="closeImageViewer()">
+        <div class="image-viewer-content">
+            <img id="viewerImage" src="" alt="Project Preview">
+        </div>
+    </div>
+
+    <script>
+        // Паралакс ефект
+        document.addEventListener('scroll', () => {
+            const parallaxElements = document.querySelectorAll('.parallax');
+            parallaxElements.forEach(element => {
+                const speed = 0.5;
+                const offset = window.pageYOffset;
+                element.style.transform = `translateY(${offset * speed}px)`;
+            });
+        });
+
+        // Перемикання мови
+        const languageSwitch = document.querySelector('.language-switch-inner');
+        languageSwitch.addEventListener('click', () => {
+            languageSwitch.classList.toggle('flipped');
+            document.body.classList.toggle('lang-en');
+            
+            const currentLang = document.body.classList.contains('lang-en') ? 'en' : 'uk';
+            localStorage.setItem('preferredLanguage', currentLang);
+            document.documentElement.lang = currentLang;
+            
+            // Оновлення заголовка сторінки
+            document.title = currentLang === 'uk' ? 
+                'Антон Прядка | Junior Python Розробник' : 
+                'Anton Priadka | Junior Python Developer';
+        });
+
+        // Відновлення збереженої мови
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            if (savedLang === 'en') {
+                document.body.classList.add('lang-en');
+                document.documentElement.lang = 'en';
+                document.querySelector('.language-switch-inner').classList.add('flipped');
+                document.title = 'Anton Priadka | Junior Python Developer';
+            }
+        });
+
+        function showProjectDetails(projectId) {
+            const modal = document.getElementById(projectId + 'Modal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Закриття модального вікна при кліку поза ним
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        let demoUrl = ''; // URL для переходу
+
+        function showLoadingAlert(url) {
+            demoUrl = url;
+            document.getElementById('loadingAlert').classList.add('show');
+            document.getElementById('alertOverlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAlert() {
+            document.getElementById('loadingAlert').classList.remove('show');
+            document.getElementById('alertOverlay').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        function proceedToDemo() {
+            window.open(demoUrl, '_blank');
+            closeAlert();
+        }
+
+        function openImageViewer(imageSrc) {
+            const viewer = document.getElementById('imageViewer');
+            const viewerImage = document.getElementById('viewerImage');
+            viewerImage.src = imageSrc;
+            viewer.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageViewer() {
+            const viewer = document.getElementById('imageViewer');
+            viewer.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Закриття при натисканні Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageViewer();
+            }
+        });
+
+        // Запобігання закриття при кліку на саме зображення
+        document.querySelector('.image-viewer-content').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        // Оновлення мови форми при перемиканні
+        document.querySelector('.language-switch-inner').addEventListener('click', () => {
+            const lang = document.body.classList.contains('lang-en') ? 'en' : 'uk';
+            document.getElementById('contactFormLang').value = lang;
+        });
+
+        // Встановлення початкової мови
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = document.body.classList.contains('lang-en') ? 'en' : 'uk';
+            document.getElementById('contactFormLang').value = lang;
+        });
+    </script>
+</body>
+</html>
