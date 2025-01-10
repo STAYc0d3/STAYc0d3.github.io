@@ -633,7 +633,7 @@
                     </label>
                     <input 
                         type="email" 
-                        name="email" 
+                        name="_replyto"
                         required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
                     >
@@ -652,6 +652,9 @@
                     ></textarea>
                 </div>
 
+                <!-- Захист від спаму -->
+                <input type="text" name="_gotcha" style="display:none">
+                
                 <!-- Приховане поле для мови -->
                 <input type="hidden" name="language" id="contactFormLang" value="en">
                 
@@ -1214,7 +1217,8 @@
                         successMessage.style.display = 'none';
                     }, 3000);
                 } else {
-                    throw new Error('Помилка відправки');
+                    const data = await response.json();
+                    throw new Error(data.error || 'Помилка відправки');
                 }
             } catch (error) {
                 console.error('Error:', error);
