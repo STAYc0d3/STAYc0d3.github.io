@@ -101,6 +101,9 @@
             position: relative;
             transform: translateY(-50px);
             transition: transform 0.3s ease-in-out;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Для iOS */
         }
 
         .modal.show .modal-content {
@@ -225,6 +228,32 @@
                 opacity: 1;
             }
         }
+
+        /* Фіксуємо фон при відкритому модальному вікні */
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Стилі для скролбару */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 </head>
 <body class="bg-white font-['Inter'] lang-en">
@@ -303,7 +332,7 @@
                 </a>
                 <a href="AntonPriadkaResume.pdf" 
                    target="_blank" 
-                   class="inline-flex items-center px-4 py-2 border border-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors duration-300">
+                   class="inline-flex items-center px-4 py-2 bg-white border-2 border-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors duration-300">
                     <i class="fas fa-file-pdf mr-2"></i>
                     <span data-lang="uk">Переглянути CV</span>
                     <span data-lang="en">View CV</span>
@@ -1115,20 +1144,20 @@
         function showProjectDetails(projectId) {
             const modal = document.getElementById(projectId + 'Modal');
             modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-open');
         }
 
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             modal.classList.remove('show');
-            document.body.style.overflow = 'auto';
+            document.body.classList.remove('modal-open');
         }
 
-        // Закриття модального вікна при кліку поза ним
+        // Закриття при кліку поза модальним вікном
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('show');
-                document.body.style.overflow = 'auto';
+                document.body.classList.remove('modal-open');
             }
         }
 
