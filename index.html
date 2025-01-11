@@ -267,6 +267,11 @@
         .animate-scroll {
             animation: scroll 20s linear infinite;
         }
+
+        /* Додаткові стилі для плавності анімації */
+        .group:hover .absolute {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="bg-white font-['Inter'] lang-en">
@@ -328,45 +333,41 @@
     <!-- Головна секція -->
     <section id="home" class="min-h-screen flex items-center relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/90 to-purple-700/90 -z-10"></div>
-        <div class="absolute inset-0 opacity-10 bg-[url('pattern.svg')] -z-10"></div>
-        <div class="max-w-7xl mx-auto px-6 py-32 text-center">
-            <div class="relative overflow-hidden">
-                <!-- Фоновий текст, що рухається -->
-                <div class="absolute w-full whitespace-nowrap animate-scroll opacity-5 text-4xl font-bold">
-                    <span class="inline-block">Hi, I'm Anton Junior Python Developer &nbsp;</span>
-                    <span class="inline-block">Hi, I'm Anton Junior Python Developer &nbsp;</span>
-                </div>
 
-                <!-- Основний контент -->
-                <div class="relative z-10">
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6">
-                        <span data-lang="uk">Привіт, я Антон</span>
-                        <span data-lang="en">Hi, I'm Anton</span>
-                    </h1>
-                    <h2 class="text-2xl md:text-4xl font-bold mb-6 gradient-text">
-                        <span data-lang="uk">Junior Python Розробник</span>
-                        <span data-lang="en">Junior Python Developer</span>
-                    </h2>
-                    <p class="text-xl text-gray-600 mb-8 max-w-2xl">
-                        <span data-lang="uk">Створюю веб-додатки, розробляю ботів та працюю з blockchain технологіями</span>
-                        <span data-lang="en">Creating web applications, developing bots and working with blockchain technologies</span>
-                    </p>
-                    <div class="relative">
-                        <!-- Фоновий текст для кнопки -->
-                        <div class="absolute w-full whitespace-nowrap animate-scroll opacity-5">
-                            <span class="inline-block">View CV &nbsp;</span>
-                            <span class="inline-block">View CV &nbsp;</span>
-                        </div>
-                        <!-- Кнопка CV -->
-                        <a href="AntonPriadkaResume.pdf" 
-                           target="_blank" 
-                           class="relative z-10 inline-flex items-center px-4 py-2 bg-white border-2 border-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors duration-300">
-                            <i class="fas fa-file-pdf mr-2"></i>
-                            <span data-lang="uk">Переглянути CV</span>
-                            <span data-lang="en">View CV</span>
-                        </a>
-                    </div>
-                </div>
+        <!-- Основний контент тепер має вищий z-index -->
+        <div class="max-w-7xl mx-auto px-6 py-32 text-center relative z-20">
+            <h1 class="text-6xl md:text-7xl font-bold text-white mb-8 parallax -z-10">
+                <span data-lang="uk">Привіт, я Антон<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300">Junior Python Розробник</span></span>
+                <span data-lang="en">Hi, I'm Anton<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300">Junior Python Developer</span></span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto leading-relaxed z-20">
+                <span data-lang="uk">Створюю веб-додатки, розробляю ботів та працюю з блокчейн технологіями</span>
+                <span data-lang="en">Creating web applications, developing bots and working with blockchain technologies</span>
+            </p>
+            <div class="flex justify-center gap-6">
+                <a href="#contact" class="inline-block bg-white text-indigo-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-indigo-50 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl">
+                    <span data-lang="uk">Зв'язатися зі мною</span>
+                    <span data-lang="en">Contact Me</span>
+                </a>
+                <a href="assets/AntonPriadkaResume.pdf" 
+                   target="_blank" 
+                   class="group relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium transition-all bg-white rounded-xl border-2 border-indigo-500/50 hover:border-indigo-600 z-20">
+                    <!-- Анімований градієнтний фон -->
+                    <span class="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-700 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-out"></span>
+                    
+                    <!-- Анімований блік -->
+                    <span class="absolute top-0 left-0 w-48 h-48 -mt-1 transition-all duration-500 ease-out -translate-x-56 -translate-y-24 bg-white opacity-10 group-hover:-translate-x-8 group-hover:translate-y-0 rotate-12"></span>
+                    
+                    <!-- Іконка та текст -->
+                    <span class="relative flex items-center gap-2 text-indigo-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-file-pdf text-lg"></i>
+                        <span data-lang="uk" class="text-base font-semibold tracking-wide">Переглянути CV</span>
+                        <span data-lang="en" class="text-base font-semibold tracking-wide">View CV</span>
+                    </span>
+                    
+                    <!-- Додатковий блік -->
+                    <span class="absolute bottom-0 right-0 w-48 h-48 transition-all duration-500 ease-out translate-x-56 translate-y-24 bg-white opacity-10 group-hover:translate-x-8 group-hover:-translate-y-0 -rotate-12"></span>
+                </a>
             </div>
         </div>
     </section>
