@@ -1141,16 +1141,27 @@
             }
         });
 
+        // Зберігаємо позицію скролу
+        let scrollPosition;
+
         function showProjectDetails(projectId) {
             const modal = document.getElementById(projectId + 'Modal');
+            // Зберігаємо поточну позицію скролу перед відкриттям модального вікна
+            scrollPosition = window.pageYOffset;
             modal.classList.add('show');
             document.body.classList.add('modal-open');
+            // Встановлюємо позицію через style
+            document.body.style.top = `-${scrollPosition}px`;
         }
 
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             modal.classList.remove('show');
             document.body.classList.remove('modal-open');
+            // Видаляємо style.top
+            document.body.style.top = '';
+            // Відновлюємо позицію скролу
+            window.scrollTo(0, scrollPosition);
         }
 
         // Закриття при кліку поза модальним вікном
@@ -1158,6 +1169,10 @@
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('show');
                 document.body.classList.remove('modal-open');
+                // Видаляємо style.top
+                document.body.style.top = '';
+                // Відновлюємо позицію скролу
+                window.scrollTo(0, scrollPosition);
             }
         }
 
